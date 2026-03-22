@@ -1,4 +1,4 @@
-# BF Scripts — FileMaker codespace
+# FileMaker codespace
 
 **Make deep, complex FileMaker coding a snap.** This repo is a **Cursor-ready workspace** for working on real scripts, custom functions, and other solution objects **outside** the FileMaker Script Workspace—where you can think clearly, search and refactor, and pair with an AI that sees the whole picture.
 
