@@ -7,11 +7,12 @@ This repository holds **workflow and agent guidance** for editing FileMaker obje
 - `AGENTS.md` — agent and editing conventions
 - `.cursor/rules/` — Cursor rules for this workspace
 - `PASTE_BACK_QUEUE.md` — **template only**: must have **no pending rows** when you commit
+- `FILEMAKER FILES/README.md` — explains the import folder (the folder body stays local)
 - `tools/` — small validation helpers
 
 ## What does not get committed
 
-- `FILEMAKER FILES/` — local snapshots of imported scripts, tables, etc. (ignored)
+- Contents of `FILEMAKER FILES/` (imported scripts, tables, etc.; ignored except `README.md` above)
 - `agent-maintained/` — local scratch copies (ignored)
 
 See `.gitignore` for the full list.

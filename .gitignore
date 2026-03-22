@@ -2,7 +2,8 @@
 .DS_Store
 
 # Imported FileMaker snapshots (source of truth is FileMaker; do not version local imports)
-FILEMAKER FILES/
+FILEMAKER FILES/*
+!FILEMAKER FILES/README.md
 
 # Local agent scratch / snapshots
 agent-maintained/
