@@ -37,6 +37,10 @@ FILEMAKER FILES/<file name>/custom functions/
 
 CI runs the same check on push and pull requests.
 
+## License
+
+This project is released under the [MIT License](LICENSE).
+
 ## Creating the GitHub repo
 
 From this folder (after `git init` and first commit):
