@@ -10,6 +10,10 @@ FileMaker is the source of truth.
 - Re-importing the same entity type should overwrite matching local files.
 - If the clipboard contains the full set for an entity type, the preferred workflow is: clear that entity folder, then import again.
 
+## First-time onboarding (wizard)
+
+When the user is new or asks for setup/onboarding, follow **`docs/ONBOARDING.md`**: clipboard workflow first; then optional **OData / Data API** discussion for **table-oriented schema reference** (not scripts); **DDR** for bulk design including scripts. There is no server API that replaces clipboard/DDR for script definitions.
+
 ## Solution scope
 
 This repo is generally meant to represent one FileMaker app, file, or solution at a time.

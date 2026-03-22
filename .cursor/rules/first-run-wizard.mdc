@@ -1,0 +1,11 @@
+---
+description: First-time setup wizard — offer guided clipboard workflow and optional schema (OData/DDR)
+alwaysApply: true
+---
+
+When the user is **onboarding**, **setting up**, **new to this repo**, or uses phrases like **wizard**, **start here**, **first time**, **how do I begin**, or **setup**:
+
+1. Open and follow **`docs/ONBOARDING.md`** phase order (clipboard first; then optional server schema; then scripts at scale).
+2. If `FILEMAKER FILES/` contains only `README.md` (no per-file namespace folder yet), **default to offering this wizard** before deep edits.
+3. **Never** encourage pasting production passwords or tokens into chat. Prefer env vars or gitignored local config; remind that `FILEMAKER FILES/` imports are gitignored but still sensitive.
+4. Be explicit: **OData / Data API do not expose script definitions**; scripts come from **clipboard** or **DDR**, not from a live “get all scripts” API.

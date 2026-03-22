@@ -2,6 +2,8 @@
 
 **Make deep, complex FileMaker coding a snap.** This repo is a **Cursor-ready workspace** for working on real scripts, custom functions, and other solution objects **outside** the FileMaker Script Workspace—where you can think clearly, search and refactor, and pair with an AI that sees the whole picture.
 
+**First time here?** In Cursor chat, say *“start the setup wizard”*—the agent will walk you through copy/paste round-trip and optional schema options. Details: [`docs/ONBOARDING.md`](docs/ONBOARDING.md).
+
 ## Why this exists
 
 FileMaker is brilliant at running solutions; long scripts and cross-file logic are still easier to **author and review** in a proper editor. Here you:
