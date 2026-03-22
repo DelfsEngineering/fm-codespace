@@ -1,58 +1,36 @@
-# BF Scripts (FileMaker workspace base)
+# BF Scripts — FileMaker codespace
 
-This repository holds **workflow and agent guidance** for editing FileMaker objects that are round-tripped through the clipboard. **FileMaker remains the source of truth** for solution objects.
+**Make deep, complex FileMaker coding a snap.** This repo is a **Cursor-ready workspace** for working on real scripts, custom functions, and other solution objects **outside** the FileMaker Script Workspace—where you can think clearly, search and refactor, and pair with an AI that sees the whole picture.
 
-## What gets committed
+## Why this exists
 
-- `AGENTS.md` — agent and editing conventions
-- `.cursor/rules/` — Cursor rules for this workspace
-- `PASTE_BACK_QUEUE.md` — **template only**: must have **no pending rows** when you commit
-- `FILEMAKER FILES/README.md` — explains the import folder (the folder body stays local)
-- `tools/` — small validation helpers
+FileMaker is brilliant at running solutions; long scripts and cross-file logic are still easier to **author and review** in a proper editor. Here you:
 
-## What does not get committed
+- **Round-trip through the clipboard** — copy objects from FileMaker into structured files, edit them with full context, then paste steps or whole snippets back where they belong.
+- **Keep FileMaker as the source of truth** — these files are a working copy for editing and review, not a second system of record.
+- **Use a predictable layout** so agents and humans always know where scripts, calcs, and schema snapshots live.
 
-- Contents of `FILEMAKER FILES/` (imported scripts, tables, etc.; ignored except `README.md` above)
-- `agent-maintained/` — local scratch copies (ignored)
+## How to use it
 
-See `.gitignore` for the full list.
+1. **Clone or copy** this repository and open the folder in **Cursor** (or your editor of choice).
+2. **Import from FileMaker** using your clipboard workflow (for example the included importer under `tools/` when present) so objects land under `FILEMAKER FILES/<your file name>/…`.
+3. **Edit** scripts and custom functions as text/XML; use the repo’s Cursor rules and `AGENTS.md` for conventions (step-only paste-back, naming, paste-back queue when you’re tracking edits).
+4. **Paste back into FileMaker** — bring updated steps or snippets back into the live script or object in FileMaker and test there.
 
-## Layout
-
-Imported artifacts live under a file-first namespace:
+Typical layout:
 
 ```text
-FILEMAKER FILES/<file name>/scripts/
-FILEMAKER FILES/<file name>/tables/
-FILEMAKER FILES/<file name>/custom functions/
+FILEMAKER FILES/<FileMaker file name>/scripts/
+FILEMAKER FILES/<FileMaker file name>/custom functions/
+FILEMAKER FILES/<FileMaker file name>/tables/
 ```
 
-## Before every commit
+Imported solution snapshots stay **on your machine** (see `FILEMAKER FILES/README.md`); this repo ships the workflow shell, not your customer data.
 
-1. **Clear** the pending table in `PASTE_BACK_QUEUE.md` (leave the header row and separator only).
-2. Run validation locally:
+## Contributing & tooling
 
-   ```bash
-   python3 tools/validate_paste_back_queue.py
-   ```
-
-CI runs the same check on push and pull requests.
+Conventions, importer behavior, and maintainer notes live in **`AGENTS.md`**. Small helpers (for example queue validation) live under **`tools/`**.
 
 ## License
 
 This project is released under the [MIT License](LICENSE).
-
-## Creating the GitHub repo
-
-From this folder (after `git init` and first commit):
-
-```bash
-gh repo create <your-org-or-user>/bf-scripts --private --source=. --remote=origin --push
-```
-
-Or create an empty repo in the GitHub UI and:
-
-```bash
-git remote add origin git@github.com:<you>/<repo>.git
-git push -u origin main
-```
