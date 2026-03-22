@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Imported FileMaker snapshots (source of truth is FileMaker; do not version local imports)
+FILEMAKER FILES/
+
+# Local agent scratch / snapshots
+agent-maintained/
+
+# Scratch and temp
+*.log
+*.tmp
+*.temp
+.cache/
