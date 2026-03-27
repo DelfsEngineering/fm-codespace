@@ -10,12 +10,10 @@ Use this file to track imported FileMaker objects that were edited locally and n
 
 ## Pending
 
-**Paste-back shape:** These files are **step-only** `fmxmlsnippet` XML (`<Step …/>` children under `<fmxmlsnippet type="FMObjectList">`, **no** outer `<Script>` wrapper). Paste into the **existing** FileMaker script in FileMaker as **steps** (replace the matching step block), not as importing a whole new script object from a folder.
+Keep local paste-back details out of commits. Before committing, clear any pending rows so this file stays a reusable template in git history.
 
 | Entity | File Namespace | FileMaker Object | FileMaker ID | Local Path | Status | Notes |
 |---|---|---|---|---|---|---|
-
-
 
 ## Suggested statuses
 
