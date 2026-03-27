@@ -10,8 +10,22 @@ When editing code in this workspace, improve clarity as you go when it can be do
 - Use a typed foreign key such as `idApp`, `idOrganization`, or `idPage` when the related entity is specific.
 - Use `idEntity` only when the relationship is intentionally generic or polymorphic.
 - Keep logic visually readable with blank lines between setup, branching, data-shaping, and output blocks.
+- When editing existing code, improve spacing and grouping so the flow is easy to scan at a glance.
 - Prefer simple, easy-to-scan code over dense or clever code.
 - Keep comments only when they explain intent, business rules, constraints, or non-obvious behavior.
 - Remove comments that merely restate the code or script step.
+- Make sure comments are truthful and current; update or remove any comment that no longer matches the code.
+- Add brief comments to code blocks when intent or business rules are not obvious, but do not comment every line.
 - When touching an existing area, leave it a little clearer than you found it without doing unrelated rewrites.
-- FileMaker scripts that use the fenced header doc block: keep **`REVISIONS`** updated with a **short one-line summary** for substantive edits only; avoid long **`WORKFLOW`** sections in the header unless explicitly desired.
+- When editing a FileMaker script, always inspect the top doc block and normalize it to the standard fenced header shape when it can be done safely.
+- Use this standard section set for script headers:
+- `CONCERN:`
+- `PARAMETERS:`
+- optional `CONTEXT:`
+- `RETURNS:`
+- optional `NOTES:`
+- optional `REVISIONS:`
+- Convert legacy labels to the standard where easy, such as `PURPOSE` to `CONCERN`, `PARAMS` or `ACCEPTED PARAMETERS` to `PARAMETERS`, and `HISTORY` to `REVISIONS`.
+- Remove stale metadata and boilerplate from script headers when possible, including `AUTHOR`, `CREATED BY`, email lines, generator-version notes, and placeholder instructions; keep only non-obvious operational details by moving them into `NOTES:` when useful.
+- Keep `REVISIONS` updated with a short one-line summary for substantive edits only, in `YYYY-MM-DD - why-focused summary` form.
+- Avoid long `WORKFLOW` sections in script headers unless explicitly desired; prefer body `SECTION` comments for procedural flow.

@@ -1,0 +1,96 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "FileMaker: Install Clipboard Dependency",
+      "type": "shell",
+      "command": "python3 -m pip install \"pyobjc==11.1\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "FileMaker: Inspect Clipboard",
+      "type": "shell",
+      "command": "python3 \"tools/fm_clipboard_import.py\" inspect",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "FileMaker: Preview Import Clipboard",
+      "type": "shell",
+      "command": "python3 \"tools/fm_clipboard_import.py\" import --preview --root \".\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "FileMaker: Import Clipboard",
+      "type": "shell",
+      "command": "python3 \"tools/fm_clipboard_import.py\" import --root \".\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "FileMaker: Clear Current Tables",
+      "type": "shell",
+      "command": "rm -rf \"${workspaceFolder}/current tables\" && mkdir -p \"${workspaceFolder}/current tables\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "FileMaker: Clear Current Scripts",
+      "type": "shell",
+      "command": "rm -rf \"${workspaceFolder}/current scripts\" && mkdir -p \"${workspaceFolder}/current scripts\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "FileMaker: Clear Current Custom Functions",
+      "type": "shell",
+      "command": "rm -rf \"${workspaceFolder}/current custom functions\" && mkdir -p \"${workspaceFolder}/current custom functions\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

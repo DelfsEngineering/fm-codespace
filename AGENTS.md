@@ -41,6 +41,7 @@ Use these assumptions unless the user explicitly says otherwise:
   - If exactly one namespace is a clear match, use it.
   - Otherwise, if only one namespace exists for that entity type, assume that same file.
   - If more than one namespace is plausible, ask the user instead of guessing.
+- When referring to FileMaker scripts in discussion, plans, paste-back notes, or summaries, prefer the script name first, or the folder path plus script name when that is clearer. Use raw FileMaker script IDs only as secondary context, not as the primary way to identify scripts.
 
 ## Editing standards
 
@@ -53,13 +54,18 @@ When editing code, scripts, calculations, or imported FileMaker objects, clean t
 - Favor readable spacing:
   - separate setup, branching, data-shaping, and output steps into clear visual blocks
   - avoid dense walls of logic when a couple of blank lines make the flow easier to scan
+  - when editing existing logic, improve spacing and grouping so the script flow is easy to scan quickly
 - Follow "useful comments only" rules:
   - keep comments only when they explain intent, business rules, non-obvious constraints, or gotchas
   - remove comments that merely restate the code or script step
   - ensure comments are truthful and current; when logic changes, update or remove any stale/misleading comments immediately
-  - for FileMaker script header docs, keep the fenced doc-block style (top/bottom `###########################################################################################` with section labels like `CONCERN`, `PARAMETERS`, `CONTEXT`, `RETURNS`, `REVISIONS`) when that format is already being used
-  - when editing a script, review the header doc block (`CONCERN`, `PARAMETERS`, `CONTEXT`, `RETURNS`, `REVISIONS`) and keep it accurate for that edit
-  - add or extend **`REVISIONS`** with a **short one-line summary** when the change is substantive (what changed and why); skip logging every trivial tweak. Do **not** maintain a long **`WORKFLOW`** section in the header unless the team explicitly wants that level of detail in the doc block
+  - add brief comments where intent, business rules, or constraints are not obvious, but do not comment every line or every obvious step
+  - when editing a FileMaker script, always inspect the top header doc block and normalize it when that can be done safely, similar to how `PASTE_BACK_QUEUE.md` is maintained for imported object edits
+  - use this standard fenced doc-block shape for script headers: `CONCERN`, `PARAMETERS`, optional `CONTEXT`, `RETURNS`, optional `NOTES`, optional `REVISIONS`
+  - convert legacy labels into the standard where easy, for example `PURPOSE` -> `CONCERN`, `PARAMS` or `ACCEPTED PARAMETERS` -> `PARAMETERS`, and `HISTORY` -> `REVISIONS`
+  - remove stale header noise when possible, including `AUTHOR`, `CREATED BY`, email lines, generator-version boilerplate, and placeholder instructions; if a legacy note still carries active business or operational value, condense it into `NOTES`
+  - add or extend **`REVISIONS`** with a **short one-line summary** when the change is substantive (what changed and why), using `YYYY-MM-DD - why-focused summary`; skip logging every trivial tweak
+  - do **not** maintain a long **`WORKFLOW`** section in the header unless the team explicitly wants that level of detail in the doc block; prefer body `SECTION` comments for flow details
 - Prefer small, easy-to-scan logical chunks over clever compactness.
 - When touching an existing area, leave it a little clearer than you found it without doing unrelated rewrites.
 - For FileMaker scripts, move hard-coded constants to editable variables near the top of the script whenever reasonably possible (for example project IDs, cluster IDs, base URLs, feature flags, and reusable literal values), and reference those variables in logic instead of repeating literals inline.

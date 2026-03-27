@@ -4,6 +4,8 @@
 # Imported FileMaker snapshots (source of truth is FileMaker; do not version local imports)
 FILEMAKER FILES/*
 !FILEMAKER FILES/README.md
+current*/
+Related reference files/
 
 # Local agent scratch / snapshots
 agent-maintained/
