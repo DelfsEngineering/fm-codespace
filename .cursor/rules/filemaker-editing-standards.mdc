@@ -18,6 +18,9 @@ When editing code in this workspace, improve clarity as you go when it can be do
 - Add brief comments to code blocks when intent or business rules are not obvious, but do not comment every line.
 - When touching an existing area, leave it a little clearer than you found it without doing unrelated rewrites.
 - When editing a FileMaker script, always inspect the top doc block and normalize it to the standard fenced header shape when it can be done safely.
+- Unless the user explicitly asks for full script-object XML, keep edited FileMaker scripts paste-back-safe as step-only `fmxmlsnippet` content that can be pasted back into an existing script as steps.
+- Before finishing FileMaker script work, verify the saved XML shape still matches a steps paste-back workflow and has not accidentally drifted into an unusable full-script wrapper.
+- In `PASTE_BACK_QUEUE.md`, note script edits as `steps into existing script` by default unless the user explicitly wants full script-object output.
 - Use this standard section set for script headers:
 - `CONCERN:`
 - `PARAMETERS:`

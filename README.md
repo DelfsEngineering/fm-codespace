@@ -29,6 +29,30 @@ FILEMAKER FILES/<FileMaker file name>/tables/
 
 Imported solution snapshots stay **on your machine** (see `FILEMAKER FILES/README.md`); this repo ships the workflow shell, not your customer data.
 
+## FM CodeSpace UI
+
+`FM CodeSpace` is the local browser UI for this workspace. It is built for the copy -> edit -> paste-back flow and keeps your queue/preview/tree actions in one place.
+
+### Run it
+
+From the repo root:
+
+```bash
+python3 "tools/fm_clipboard_web.py"
+```
+
+Then open:
+
+- [http://127.0.0.1:8765](http://127.0.0.1:8765)
+
+### What it gives you
+
+- **Single update action**: `Use Clipboard` + `Update Local` to import/update local files from FileMaker clipboard payloads (or dropped DDR/XML).
+- **Recent scripts edited**: one list for pending/recent script rows with quick actions (`Open`, `Copy as Text`, `Copy as FM`, `Copy as FM Steps`, dismiss `x`).
+- **Tree + preview workflow**: select files from the tree, inspect raw snippet XML, and copy back in the shape you need.
+- **Filename search in tree**: filter by file name directly in the `Files Tree` panel.
+- **Safe local cleanup**: delete files/folders from the tree with row-level trash buttons.
+
 ## Contributing & tooling
 
 Conventions, importer behavior, and maintainer notes live in **`AGENTS.md`**. Small helpers (for example queue validation) live under **`tools/`**.

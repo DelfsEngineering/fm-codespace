@@ -30,19 +30,20 @@ KNOWN_CLIPBOARD_TYPES = {
 KNOWN_DYNAMIC_PREFIX = "dyn.ah62d4rv4gk8zuxn"
 FMXMLSNIPPET_HEADER = "<fmxmlsnippet"
 FALLBACK_DIR_NAME = "_Clipboard Imports"
-ENTITY_ROOT_FOLDERS = {
-    "script": "current scripts",
-    "script-step": "current scripts",
-    "custom-function": "current custom functions",
-    "table": "current tables",
-    "field": "current fields",
-    "value-list": "current value lists",
-    "layout-object-fp7": "current layouts",
-    "layout-object-fmp12": "current layouts",
-    "theme": "current themes",
-    "custom-menu": "current custom menus",
-    "unknown": "current other fm objects",
-    "unknown-filemaker-object": "current other fm objects",
+FILEMAKER_FILES_DIR_NAME = "FILEMAKER FILES"
+ENTITY_SUBFOLDERS = {
+    "script": "scripts",
+    "script-step": "scripts",
+    "custom-function": "custom functions",
+    "table": "tables",
+    "field": "fields",
+    "value-list": "value lists",
+    "layout-object-fp7": "layouts",
+    "layout-object-fmp12": "layouts",
+    "theme": "themes",
+    "custom-menu": "custom menus",
+    "unknown": "other fm objects",
+    "unknown-filemaker-object": "other fm objects",
 }
 OBJECT_TAG_KIND = {
     "Script": "script",
@@ -119,12 +120,16 @@ def build_parser() -> argparse.ArgumentParser:
         "--entity-folder-mode",
         choices=("auto", "off"),
         default="auto",
-        help="Route imports into entity-specific folders like 'current scripts' or 'current custom functions'.",
+        help="Route imports into FILEMAKER FILES/<file name>/<entity type>/ folders.",
     )
     import_parser.add_argument(
         "--fallback-dir",
         default=FALLBACK_DIR_NAME,
-        help="Relative folder to use when the XML does not include hierarchy metadata.",
+        help="Fallback file namespace when clipboard XML has no file namespace metadata.",
+    )
+    import_parser.add_argument(
+        "--file-namespace",
+        help="Force a specific file namespace under FILEMAKER FILES/ for imported items.",
     )
     import_parser.add_argument(
         "--script-format",
@@ -302,7 +307,7 @@ def inspect_payload(payload: ClipboardPayload, fallback_name: str | None) -> dic
         "source": payload.source,
         "clipboard_type": payload.clipboard_type,
         "kind": payload.kind,
-        "entity_folder": entity_root_folder(payload.kind),
+        "entity_folder": f"{FILEMAKER_FILES_DIR_NAME}/<file name>/{entity_subfolder(payload.kind)}",
         "size_bytes": payload.size_bytes,
         "available_types": payload.available_types,
         "xml_root": local_tag(root.tag),
@@ -817,14 +822,80 @@ def print_import_summary(results: list[WriteResult], preview: bool) -> None:
         print(f"[{result.action}] {result.path}")
 
 
-def entity_root_folder(payload_kind: str) -> str:
-    return ENTITY_ROOT_FOLDERS.get(payload_kind, ENTITY_ROOT_FOLDERS["unknown"])
+def entity_subfolder(payload_kind: str) -> str:
+    return ENTITY_SUBFOLDERS.get(payload_kind, ENTITY_SUBFOLDERS["unknown"])
 
 
-def resolve_import_root(base_root: Path, payload_kind: str, entity_folder_mode: str) -> Path:
+def infer_file_namespace_and_parts(
+    relative_parts: list[str],
+    known_namespaces: set[str],
+    explicit_file_namespace: str | None,
+    fallback_namespace: str,
+) -> tuple[str, list[str]]:
+    if explicit_file_namespace:
+        if relative_parts and relative_parts[0] == explicit_file_namespace:
+            return explicit_file_namespace, relative_parts[1:]
+        return explicit_file_namespace, relative_parts
+
+    if not relative_parts:
+        return fallback_namespace, []
+
+    if len(relative_parts) == 1:
+        return fallback_namespace, relative_parts
+
+    first_part = relative_parts[0]
+    if first_part in known_namespaces:
+        return first_part, relative_parts[1:]
+
+    if len(known_namespaces) == 1:
+        return next(iter(known_namespaces)), relative_parts
+
+    return first_part, relative_parts[1:]
+
+
+def route_items_to_filemaker_layout(
+    items: list[ImportItem],
+    base_root: Path,
+    payload_kind: str,
+    explicit_file_namespace: str | None,
+    fallback_namespace: str,
+    entity_folder_mode: str,
+) -> list[ImportItem]:
     if entity_folder_mode == "off":
-        return base_root
-    return base_root / entity_root_folder(payload_kind)
+        return items
+
+    filemaker_root = base_root / FILEMAKER_FILES_DIR_NAME
+    known_namespaces = {
+        path.name
+        for path in filemaker_root.iterdir()
+        if path.is_dir()
+    } if filemaker_root.exists() else set()
+    routed_items: list[ImportItem] = []
+    for item in items:
+        # Route by each item's own kind so grouped/mixed payloads
+        # still land in the correct entity folders (e.g. scripts -> scripts/).
+        target_subfolder = entity_subfolder(item.kind or payload_kind)
+        file_namespace, trimmed_parts = infer_file_namespace_and_parts(
+            relative_parts=item.relative_parts,
+            known_namespaces=known_namespaces,
+            explicit_file_namespace=explicit_file_namespace,
+            fallback_namespace=fallback_namespace,
+        )
+        routed_items.append(
+            ImportItem(
+                kind=item.kind,
+                name=item.name,
+                relative_parts=[
+                    FILEMAKER_FILES_DIR_NAME,
+                    file_namespace,
+                    target_subfolder,
+                    *trimmed_parts,
+                ],
+                output_text=item.output_text,
+                original_tag=item.original_tag,
+            )
+        )
+    return routed_items
 
 
 def command_inspect(args: argparse.Namespace) -> int:
@@ -866,14 +937,17 @@ def command_import(args: argparse.Namespace) -> int:
         fallback_dir=args.fallback_dir,
         filename_style=args.filename_style,
     )
-    target_root = resolve_import_root(
-        args.root.resolve(),
-        payload.kind,
-        args.entity_folder_mode,
+    routed_items = route_items_to_filemaker_layout(
+        items=items,
+        base_root=args.root.resolve(),
+        payload_kind=payload.kind,
+        explicit_file_namespace=args.file_namespace,
+        fallback_namespace=args.fallback_dir,
+        entity_folder_mode=args.entity_folder_mode,
     )
     results = write_items(
-        items,
-        root=target_root,
+        routed_items,
+        root=args.root.resolve(),
         preview=args.preview,
         overwrite=args.overwrite,
     )

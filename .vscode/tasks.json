@@ -15,6 +15,20 @@
       "problemMatcher": []
     },
     {
+      "label": "FileMaker: Start FM CodeSpace",
+      "type": "shell",
+      "command": "python3 \"tools/fm_clipboard_web.py\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
       "label": "FileMaker: Inspect Clipboard",
       "type": "shell",
       "command": "python3 \"tools/fm_clipboard_import.py\" inspect",
@@ -54,9 +68,9 @@
       "problemMatcher": []
     },
     {
-      "label": "FileMaker: Clear Current Tables",
+      "label": "FileMaker: Clear Tables (all namespaces)",
       "type": "shell",
-      "command": "rm -rf \"${workspaceFolder}/current tables\" && mkdir -p \"${workspaceFolder}/current tables\"",
+      "command": "for d in \"${workspaceFolder}/FILEMAKER FILES\"/*; do [ -d \"$d\" ] || continue; rm -rf \"$d/tables\"; mkdir -p \"$d/tables\"; done",
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -67,9 +81,9 @@
       "problemMatcher": []
     },
     {
-      "label": "FileMaker: Clear Current Scripts",
+      "label": "FileMaker: Clear Scripts (all namespaces)",
       "type": "shell",
-      "command": "rm -rf \"${workspaceFolder}/current scripts\" && mkdir -p \"${workspaceFolder}/current scripts\"",
+      "command": "for d in \"${workspaceFolder}/FILEMAKER FILES\"/*; do [ -d \"$d\" ] || continue; rm -rf \"$d/scripts\"; mkdir -p \"$d/scripts\"; done",
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -80,9 +94,9 @@
       "problemMatcher": []
     },
     {
-      "label": "FileMaker: Clear Current Custom Functions",
+      "label": "FileMaker: Clear Custom Functions (all namespaces)",
       "type": "shell",
-      "command": "rm -rf \"${workspaceFolder}/current custom functions\" && mkdir -p \"${workspaceFolder}/current custom functions\"",
+      "command": "for d in \"${workspaceFolder}/FILEMAKER FILES\"/*; do [ -d \"$d\" ] || continue; rm -rf \"$d/custom functions\"; mkdir -p \"$d/custom functions\"; done",
       "options": {
         "cwd": "${workspaceFolder}"
       },

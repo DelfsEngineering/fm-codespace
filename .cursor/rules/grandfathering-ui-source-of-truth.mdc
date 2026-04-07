@@ -1,0 +1,15 @@
+---
+description: Keep grandfathering UI list and detail driven by one source of truth
+alwaysApply: true
+---
+
+# Grandfathering UI Source Of Truth
+
+For the grandfathering page, keep each UI area tied to one clear data source.
+
+- The left organization list should render only the organizations that are in the visible prepared list for that page.
+- Do not rebuild the left list from multiple fallback arrays when the page already has a visible list source.
+- Clicking a row should store one normalized selected organization record, and the right-side detail should read from that selected record.
+- Do not let the detail panel fall back to another organization just because that other record has richer data.
+- If the selected organization is missing apps or other fields, show an empty or partial state for that same organization instead of switching records.
+- Keep counts, row labels, selection state, and manual mapping rows aligned with the same normalized selected/list data.

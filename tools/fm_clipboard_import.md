@@ -24,6 +24,45 @@ If you just want to test parsing/import behavior, use `--input path/to/file.xml`
 
 ## Commands
 
+### FM CodeSpace (Web UI)
+
+Start the local browser UI:
+
+```bash
+python3 "tools/fm_clipboard_web.py" --open
+```
+
+Or without auto-opening a browser:
+
+```bash
+python3 "tools/fm_clipboard_web.py"
+```
+
+The UI exposes:
+
+- simplified import source selection: `Clipboard` or `DDR/XML Path`
+- drag-and-drop DDR/XML file support for local imports
+- inspect clipboard
+- preview import
+- import
+- dump clipboard XML
+- browse `FILEMAKER FILES/<file>/<entity>/...` namespaces and objects
+- visual file status badges (`clean`, `edited`, `queued`, `pasted back`, `unknown`)
+- paste-back queue view and status actions (for example mark selected file `pasted back`)
+
+and uses the same importer internals as `tools/fm_clipboard_import.py`, so routing and naming behavior stays consistent between CLI and browser workflow.
+
+Cross-platform note:
+
+- The web app runs on macOS and Windows.
+- Live clipboard capture is currently macOS-first.
+- On Windows today, use **Input XML Path** in the UI (or `--input` in CLI) until a Windows clipboard adapter is added.
+
+Queue storage note:
+
+- The web app now uses a local SQLite queue store at `agent-maintained/fm_workspace_ui.sqlite3` for status transitions and browsing performance.
+- `PASTE_BACK_QUEUE.md` remains auto-synced as a human-readable/export artifact for team visibility.
+
 Inspect the current FileMaker clipboard:
 
 ```bash
@@ -42,17 +81,17 @@ Preview an import without writing anything:
 python3 "tools/fm_clipboard_import.py" import --preview --root "."
 ```
 
-By default, imports are routed into entity-specific folders under the workspace root:
+By default, imports are routed into file-first namespace folders:
 
-- scripts -> `current scripts/`
-- custom functions -> `current custom functions/`
-- tables -> `current tables/`
-- fields -> `current fields/`
-- value lists -> `current value lists/`
-- layouts -> `current layouts/`
-- themes -> `current themes/`
-- custom menus -> `current custom menus/`
-- unknown FM objects -> `current other fm objects/`
+- scripts -> `FILEMAKER FILES/<file name>/scripts/`
+- custom functions -> `FILEMAKER FILES/<file name>/custom functions/`
+- tables -> `FILEMAKER FILES/<file name>/tables/`
+- fields -> `FILEMAKER FILES/<file name>/fields/`
+- value lists -> `FILEMAKER FILES/<file name>/value lists/`
+- layouts -> `FILEMAKER FILES/<file name>/layouts/`
+- themes -> `FILEMAKER FILES/<file name>/themes/`
+- custom menus -> `FILEMAKER FILES/<file name>/custom menus/`
+- unknown FM objects -> `FILEMAKER FILES/<file name>/other fm objects/`
 
 By default, imported script and custom-function filenames include a stable FileMaker-scoped ID suffix for safer round-tripping, for example:
 
@@ -68,6 +107,12 @@ python3 "tools/fm_clipboard_import.py" import \
   --root "."
 ```
 
+Force a specific FileMaker file namespace (recommended when clipboard hierarchy is partial):
+
+```bash
+python3 "tools/fm_clipboard_import.py" import --file-namespace "BetterForms_Master"
+```
+
 When importing script-step snippets instead of full scripts, pass a fallback name:
 
 ```bash
@@ -81,13 +126,13 @@ If you want to keep this lightweight for now, the easiest workflow in Cursor is:
 1. Copy scripts or folders in FileMaker.
 2. In Cursor, either run a task from the Command Palette or ask the agent to run one of the importer commands.
 3. Review the preview output before doing the real import when the payload is large.
-4. Imports are routed into entity-specific folders like `current scripts/` and `current custom functions/` so the workspace root stays clean.
+4. Imports are routed into file-first namespace folders like `FILEMAKER FILES/BetterForms_Master/scripts/` so the workspace root stays clean.
 
 Suggested agent requests:
 
 - `Inspect the FileMaker clipboard`
-- `Preview-import the FileMaker clipboard into the right current folder`
-- `Import the FileMaker clipboard into the right current folder`
+- `Preview-import the FileMaker clipboard into the right FILEMAKER FILES namespace`
+- `Import the FileMaker clipboard into the right FILEMAKER FILES namespace`
 - `Dump the current FileMaker clipboard XML to a temp file`
 
 If you omit a FileMaker file namespace when asking the agent to import a copied subfolder, the preferred inference rule is:
@@ -99,12 +144,13 @@ If you omit a FileMaker file namespace when asking the agent to import a copied 
 
 There are also Cursor tasks in `.vscode/tasks.json`:
 
+- `FileMaker: Start FM CodeSpace`
 - `FileMaker: Inspect Clipboard`
 - `FileMaker: Preview Import Clipboard`
 - `FileMaker: Import Clipboard`
-- `FileMaker: Clear Current Tables`
-- `FileMaker: Clear Current Scripts`
-- `FileMaker: Clear Current Custom Functions`
+- `FileMaker: Clear Tables (all namespaces)`
+- `FileMaker: Clear Scripts (all namespaces)`
+- `FileMaker: Clear Custom Functions (all namespaces)`
 - `FileMaker: Install Clipboard Dependency`
 
 These give you a no-UI workflow that is still fast enough for day-to-day use.
@@ -120,25 +166,25 @@ You can use these phrases directly in chat and I should understand the intended 
   Preview where the current clipboard would land without writing files.
 
 - `import clipboard`
-  Import the current clipboard into the routed current folder and overwrite matching files.
+  Import the current clipboard into the routed `FILEMAKER FILES/<file name>/<entity>/` folder and overwrite matching files.
 
 - `clear tables`
-  Remove everything under `current tables/` and recreate the folder.
+  Remove everything under each namespace table folder (`FILEMAKER FILES/*/tables/`) and recreate each folder.
 
 - `clear scripts`
-  Remove everything under `current scripts/` and recreate the folder.
+  Remove everything under each namespace scripts folder (`FILEMAKER FILES/*/scripts/`) and recreate each folder.
 
 - `clear custom functions`
-  Remove everything under `current custom functions/` and recreate the folder.
+  Remove everything under each namespace custom-functions folder (`FILEMAKER FILES/*/custom functions/`) and recreate each folder.
 
 - `replace tables from clipboard`
-  Clear `current tables/`, then import the current table clipboard. This is the safest workflow when FileMaker is the source of truth and you copied the full table set.
+  Clear namespace table folders (`FILEMAKER FILES/*/tables/`), then import the current table clipboard. This is the safest workflow when FileMaker is the source of truth and you copied the full table set.
 
 - `replace scripts from clipboard`
-  Clear `current scripts/`, then import the current script clipboard. Use this only when the clipboard contains the full script set you want represented locally.
+  Clear namespace scripts folders (`FILEMAKER FILES/*/scripts/`), then import the current script clipboard. Use this only when the clipboard contains the full script set you want represented locally.
 
 - `replace custom functions from clipboard`
-  Clear `current custom functions/`, then import the current custom-function clipboard.
+  Clear namespace custom-function folders (`FILEMAKER FILES/*/custom functions/`), then import the current custom-function clipboard.
 
 ## Source of truth
 

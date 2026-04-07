@@ -42,7 +42,6 @@ Use these assumptions unless the user explicitly says otherwise:
   - Otherwise, if only one namespace exists for that entity type, assume that same file.
   - If more than one namespace is plausible, ask the user instead of guessing.
 - When referring to FileMaker scripts in discussion, plans, paste-back notes, or summaries, prefer the script name first, or the folder path plus script name when that is clearer. Use raw FileMaker script IDs only as secondary context, not as the primary way to identify scripts.
-
 ## Editing standards
 
 When editing code, scripts, calculations, or imported FileMaker objects, clean things up as you go when it can be done safely.
