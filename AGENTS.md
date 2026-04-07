@@ -266,4 +266,4 @@ Key system context:
 - Important business entities include Apps, Organizations, Subscriptions, Plans, Pages, Sites, People, and related HAM authorization data.
 - Imported FileMaker tables can be used to inspect real schema details such as field names and field definitions.
 
-For broader system context, see `ARCHITECTURE.md`.
+Broader system architecture notes are intentionally kept outside this repository (local-only).

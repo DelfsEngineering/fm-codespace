@@ -14,3 +14,7 @@ agent-maintained/
 *.tmp
 *.temp
 .cache/
+
+# Local-only docs (confidential or file-specific; not part of the shared workflow base)
+ARCHITECTURE.md
+RANCHER_API_PERFORMANCE_REVIEW.md
