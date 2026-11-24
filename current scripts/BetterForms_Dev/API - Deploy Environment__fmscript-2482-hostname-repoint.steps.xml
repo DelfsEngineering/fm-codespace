@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  BetterForms_Dev only. Script 2482 "API - Deploy Environment".
+  Paste these steps into the existing script. Do not import as a new script.
+
+  Header: inside REVISIONS, after the 2026-11-10 line, add:
+  #  2026-11-24 - When an existing target domain's workload id differs from the source, spawn Create/Update and Provision Domain on the server without waiting so the ingress repoint runs during deploy.
+
+  Body: paste the steps below immediately BEFORE
+  Perform Script [ "API - Provision Environment { provisionObj } V2" ; Parameter: $provisionObj ]
+  (script 2862). That call is the start of provision. The domain-record update and both Redis clears stay after it and are not waited on.
+
+  Not applied in live BetterForms_Dev from this machine. FileMaker was not reachable.
+-->
+<fmxmlsnippet type="FMObjectList">
+	<Step enable="True" id="89" name="# (comment)">
+		<StepText/>
+		<DisableStepCollapsed state="False"/>
+		<Restore state="False"/>
+	</Step>
+	<Step enable="True" id="89" name="# (comment)">
+		<StepText>#SECTION: Repoint hostnames when the source base code id differs from the target.</StepText>
+		<DisableStepCollapsed state="False"/>
+		<Restore state="False"/>
+		<Text>SECTION: Repoint hostnames when the source base code id differs from the target.</Text>
+	</Step>
+	<Step enable="True" id="89" name="# (comment)">
+		<StepText>#Spawn 2060 on its own server session and do not wait. 2060 calls 3059, which calls 2319 and 2338. Parameter matches Env Edit: { domain } with idRancherWorkload set to the incoming source id.</StepText>
+		<DisableStepCollapsed state="False"/>
+		<Restore state="False"/>
+		<Text>Spawn 2060 on its own server session and do not wait. 2060 calls 3059, which calls 2319 and 2338. Parameter matches Env Edit: { domain } with idRancherWorkload set to the incoming source id.</Text>
+	</Step>
+	<Step enable="True" id="89" name="# (comment)">
+		<StepText/>
+		<DisableStepCollapsed state="False"/>
+		<Restore state="False"/>
+	</Step>
+	<Step enable="True" id="68" name="If">
+		<StepText>If [ not IsEmpty ( JSONGetElement ( $envTo ; "id" ) ) and not IsEmpty ( $idRancherWorkloadFrom ) ]</StepText>
+		<DisableStepCollapsed state="False"/>
+		<Restore state="False"/>
+		<Calculation><![CDATA[not IsEmpty ( JSONGetElement ( $envTo ; "id" ) ) and not IsEmpty ( $idRancherWorkloadFrom )]]></Calculation>
+	</Step>
+	<Step enable="True" id="141" name="Set Variable">
+		<StepText>Set Variable [ $domainsToRepoint; Value:GetColumnAsArray ( Domains::asJSON ; Domains::idEnvironment ; JSONGetElement ( $envTo ; "id" ) ) ]</StepText>
+		<DisableStepCollapsed state="False"/>
+		<Value>
+			<Calculation><![CDATA[GetColumnAsArray ( Domains::asJSON ; Domains::idEnvironment ; JSONGetElement ( $envTo ; "id" ) )]]></Calculation>
+		</Value>
+		<Repetition>
+			<Calculation><![CDATA[1]]></Calculation>
+		</Repetition>
+		<Name>$domainsToRepoint</Name>
+	</Step>
+	<Step enable="True" id="141" name="Set Variable">
+		<StepText>Set Variable [ $domainIndex; Value:0 ]</StepText>
+		<DisableStepCollapsed state="False"/>
+		<Value>
+			<Calculation><![CDATA[0]]></Calculation>
+		</Value>
+		<Repetition>
+			<Calculation><![CDATA[1]]></Calculation>
+		</Repetition>
+		<Name>$domainIndex</Name>
+	</Step>
+	<Step enable="True" id="89" name="# (comment)">
+		<StepText/>
+		<DisableStepCollapsed state="False"/>
+		<Restore state="False"/>
+	</Step>
+	<Step enable="True" id="71" name="Loop">
+		<StepText>Loop [ Flush: Always ]</StepText>
+		<DisableStepCollapsed state="False"/>
+		<Restore state="False"/>
+		<FlushType value="Always"/>
+	</Step>
+	<Step enable="True" id="141" name="Set Variable">
+		<StepText>Set Variable [ $domain; Value:JSONGetElement ( $domainsToRepoint ; $domainIndex ) ]</StepText>
+		<DisableStepCollapsed state="False"/>
+		<Value>
+			<Calculation><![CDATA[JSONGetElement ( $domainsToRepoint ; $domainIndex )]]></Calculation>
+		</Value>
+		<Repetition>
+			<Calculation><![CDATA[1]]></Calculation>
+		</Repetition>
+		<Name>$domain</Name>
+	</Step>
+	<Step enable="True" id="72" name="Exit Loop If">
+		<StepText>Exit Loop If [ $domainIndex ≥ 100 or IsEmpty ( $domain ) or Left ( $domain ; 1 ) = "?" ]</StepText>
+		<DisableStepCollapsed state="False"/>
+		<Calculation><![CDATA[$domainIndex ≥ 100 or IsEmpty ( $domain ) or Left ( $domain ; 1 ) = "?"]]></Calculation>
+	</Step>
+	<Step enable="True" id="141" name="Set Variable">
+		<StepText>Set Variable [ $currentWorkload; Value:Let ( w = JSONGetElement ( $domain ; "idRancherWorkload" ) ; If ( IsEmpty ( w ) or Left ( w ; 1 ) = "?" ; "" ; w ) ) ]</StepText>
+		<DisableStepCollapsed state="False"/>
+		<Value>
+			<Calculation><![CDATA[Let ( w = JSONGetElement ( $domain ; "idRancherWorkload" ) ; If ( IsEmpty ( w ) or Left ( w ; 1 ) = "?" ; "" ; w ) )]]></Calculation>
+		</Value>
+		<Repetition>
+			<Calculation><![CDATA[1]]></Calculation>
+		</Repetition>
+		<Name>$currentWorkload</Name>
+	</Step>
+	<Step enable="True" id="89" name="# (comment)">
+		<StepText/>
+		<DisableStepCollapsed state="False"/>
+		<Restore state="False"/>
+	</Step>
+	<Step enable="True" id="68" name="If">
+		<StepText>If [ $currentWorkload ≠ $idRancherWorkloadFrom and not IsEmpty ( JSONGetElement ( $domain ; "id" ) ) ]</StepText>
+		<DisableStepCollapsed state="False"/>
+		<Restore state="False"/>
+		<Calculation><![CDATA[$currentWorkload ≠ $idRancherWorkloadFrom and not IsEmpty ( JSONGetElement ( $domain ; "id" ) )]]></Calculation>
+	</Step>
+	<Step enable="True" id="141" name="Set Variable">
+		<StepText>Set Variable [ $domain; Value:JSONSetElement ( $domain ; [ "idRancherWorkload" ; $idRancherWorkloadFrom ; JSONString ] ) ]</StepText>
+		<DisableStepCollapsed state="False"/>
+		<Value>
+			<Calculation><![CDATA[JSONSetElement ( $domain ; [ "idRancherWorkload" ; $idRancherWorkloadFrom ; JSONString ] )]]></Calculation>
+		</Value>
+		<Repetition>
+			<Calculation><![CDATA[1]]></Calculation>
+		</Repetition>
+		<Name>$domain</Name>
+	</Step>
+	<Step enable="True" id="141" name="Set Variable">
+		<StepText>Set Variable [ $par; Value:JSONSetElement ( "" ; [ "domain" ; $domain ; JSONObject ] ) ]</StepText>
+		<DisableStepCollapsed state="False"/>
+		<Value>
+			<Calculation><![CDATA[JSONSetElement ( "" ; [ "domain" ; $domain ; JSONObject ] )]]></Calculation>
+		</Value>
+		<Repetition>
+			<Calculation><![CDATA[1]]></Calculation>
+		</Repetition>
+		<Name>$par</Name>
+	</Step>
+	<Step enable="True" id="164" name="Perform Script on Server">
+		<StepText>Perform Script on Server [ “Create/Update and Provision Domain”; Parameter: $par ]</StepText>
+		<WaitForCompletion state="False"/>
+		<DisableStepCollapsed state="False"/>
+		<Calculation><![CDATA[$par]]></Calculation>
+		<ScriptReference id="2060" name="Create/Update and Provision Domain"/>
+	</Step>
+	<Step enable="True" id="70" name="End If">
+		<StepText>End If</StepText>
+		<DisableStepCollapsed state="False"/>
+	</Step>
+	<Step enable="True" id="89" name="# (comment)">
+		<StepText/>
+		<DisableStepCollapsed state="False"/>
+		<Restore state="False"/>
+	</Step>
+	<Step enable="True" id="141" name="Set Variable">
+		<StepText>Set Variable [ $domainIndex; Value:$domainIndex + 1 ]</StepText>
+		<DisableStepCollapsed state="False"/>
+		<Value>
+			<Calculation><![CDATA[$domainIndex + 1]]></Calculation>
+		</Value>
+		<Repetition>
+			<Calculation><![CDATA[1]]></Calculation>
+		</Repetition>
+		<Name>$domainIndex</Name>
+	</Step>
+	<Step enable="True" id="73" name="End Loop">
+		<StepText>End Loop</StepText>
+		<DisableStepCollapsed state="False"/>
+	</Step>
+	<Step enable="True" id="70" name="End If">
+		<StepText>End If</StepText>
+		<DisableStepCollapsed state="False"/>
+	</Step>
+	<Step enable="True" id="89" name="# (comment)">
+		<StepText/>
+		<DisableStepCollapsed state="False"/>
+		<Restore state="False"/>
+	</Step>
+</fmxmlsnippet>
